@@ -1,0 +1,53 @@
+{
+  "extends": [
+    "airbnb",
+    "airbnb/hooks",
+    "airbnb-typescript",
+    "plugin:prettier/recommended"
+  ],
+  "rules": {
+    "jsx-a11y/no-noninteractive-element-interactions": "off",
+    "jsx-a11y/click-events-have-key-events": "off",
+    "jsx-a11y/no-static-element-interactions": "off",
+    "naming-convention": "off",
+    "@typescript-eslint/naming-convention": "off",
+    "react/require-default-props": "off",
+    "react/destructuring-assignment": "off",
+    "react/jsx-props-no-spreading": "off",
+    "react/no-unescaped-entities": "off",
+    "no-restricted-syntax": "off",
+    "no-nested-ternary": "off",
+    "eqeqeq": "off",
+    "@typescript-eslint/no-unused-vars": "off",
+    "import/prefer-default-export": "off",
+    "no-param-reassign": "off",
+    "no-plusplus": "off",
+    "@typescript-eslint/no-use-before-define": "off",
+    "no-case-declarations": "off",
+    "no-continue": "off",
+    "@typescript-eslint/no-shadow": "warn",
+    "no-underscore-dangle": "off",
+    "consistent-return": "off",
+    "no-multi-assign": "off",
+    "no-bitwise": "off",
+    "no-restricted-globals": "warn",
+    "func-names": "off",
+    "prettier/prettier": ["error", {
+      "printWidth": 80,
+      "tabWidth": 2,
+      "useTabs": false,
+      "semi": false,
+      "singleQuote": true,
+      "trailingComma": "all",
+      "bracketSpacing": true,
+      "jsxBracketSameLine": false,
+      "arrowParens": "avoid",
+      "endOfLine": "lf"
+    }, {
+      "usePrettierrc": false
+    }]
+  },
+  "parserOptions": {
+    "project": "./tsconfig.json"
+  }
+}
