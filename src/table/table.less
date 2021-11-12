@@ -1,11 +1,21 @@
 .table-container {
-  overflow: auto;
-  width: 600px;
-  height: 400px;
+  overflow: hidden;
+  position: relative;
+  .content-wrapper {
+    overflow: auto;
+    &.is-virtual {
+      overflow: hidden;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 1;
+    }
+  }
 }
 
 .table {
   table-layout: fixed;
   width: 100%;
   overflow: hidden;
+  border-spacing: 0;
 }

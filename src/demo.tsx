@@ -44,6 +44,9 @@ const columns: IColumn[] = [
     code: 'address',
     title: '地址',
     width: 600,
+    render: (value, rowData, index) => {
+      return <span>{value} </span>
+    },
   },
   {
     code: 'hobby',
@@ -59,5 +62,14 @@ const columns: IColumn[] = [
 
 export default function App() {
   const [dataSource] = useState(getDataSource())
-  return <BaseTable columns={columns} dataSource={dataSource} />
+  return (
+    <BaseTable
+      virtual
+      width={1000}
+      rowHeight={30}
+      height={600}
+      columns={columns}
+      dataSource={dataSource}
+    />
+  )
 }

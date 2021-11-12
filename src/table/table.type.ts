@@ -5,6 +5,8 @@ export interface ITableProps<T = any> {
   dataSource: T[]
   rowHeight?: number | ((rowData: T, index: number) => number)
   virtual?: boolean
+  width?: number
+  height?: number
 }
 
 export interface IColumn<T = any> {
