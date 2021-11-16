@@ -3,7 +3,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
   mode: 'production',
-  entry: path.resolve(__dirname, '../index.tsx'),
+  entry: path.resolve(__dirname, '../baseTable.tsx'),
   output: {
     path: path.resolve(__dirname, '../dist'),
     filename: 'index.js'

@@ -1,4 +1,4 @@
-import { ReactNode } from 'react'
+import React, { ReactNode } from 'react'
 
 export interface ITableProps<T = any> {
   columns: IColumn<T>[]
@@ -7,6 +7,7 @@ export interface ITableProps<T = any> {
   virtual?: boolean
   width?: number
   height?: number
+  rowProps?: (rowData: T, index: number) => React.HTMLAttributes<any>
 }
 
 export interface IColumn<T = any> {

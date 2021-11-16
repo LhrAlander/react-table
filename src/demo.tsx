@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import BaseTable from '@/table'
+import BaseTable from '@/table/baseTable'
 import { IColumn } from '@/table/table.type'
 
 function getDataSource() {
@@ -23,7 +23,7 @@ const columns: IColumn[] = [
   {
     code: 'id',
     title: '#',
-    width: 30,
+    width: 60,
   },
   {
     code: 'name',
@@ -33,7 +33,7 @@ const columns: IColumn[] = [
   {
     code: 'age',
     title: '年龄',
-    width: 200,
+    width: 170,
   },
   {
     code: 'job',
@@ -66,7 +66,7 @@ export default function App() {
     <BaseTable
       virtual
       width={1000}
-      rowHeight={30}
+      rowHeight={48}
       height={600}
       columns={columns}
       dataSource={dataSource}

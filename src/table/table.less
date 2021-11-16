@@ -1,11 +1,22 @@
 .table-container {
+  line-height: 1.28571;
   overflow: scroll;
   position: relative;
-  .transform-helper {
-    overflow: hidden;
+  .table-head-container {
+    overflow: auto;
+    -ms-overflow-style:  none;
+    scrollbar-width: none;
+    position: sticky;
+    position: -webkit-sticky;
+    z-index: 10;
+    top: 0;
+    &::-webkit-scrollbar {
+      display: none;
+    }
   }
   .content-wrapper {
-    overflow: hidden;
+    overflow-y: hidden;
+    overflow-x: auto;
   }
 }
 
@@ -14,7 +25,36 @@
   width: 100%;
   overflow: hidden;
   border-spacing: 0;
+  border-collapse: separate;
+  thead {
+    th {
+      height: 33px;
+      box-sizing: border-box;
+      padding: 8px 12px;
+      border-top: 1px solid #dfe3e8;
+      border-right: 1px solid #dfe3e8;
+      background-color: #e9edf2;
+      font-weight: 400;
+      font-size: 12px;
+      text-align: left;
+      &:first-child {
+        border-left: 1px solid #dfe3e8;
+      }
+    }
+  }
   tr {
     box-sizing: border-box;
+    &:first-child td {
+      border-top: 1px solid #dfe3e8;
+    }
+    td {
+      padding: 8px 12px;
+      box-sizing: border-box;
+      border-right: 1px solid #dfe3e8;
+      border-bottom: 1px solid #dfe3e8;
+      &:first-child {
+        border-left: 1px solid #dfe3e8;
+      }
+    }
   }
 }
