@@ -1,15 +1,11 @@
 .table-container {
-  overflow: hidden;
+  overflow: scroll;
   position: relative;
+  .transform-helper {
+    overflow: hidden;
+  }
   .content-wrapper {
-    overflow: auto;
-    &.is-virtual {
-      overflow: hidden;
-      position: absolute;
-      top: 0;
-      left: 0;
-      z-index: 1;
-    }
+    overflow: hidden;
   }
 }
 
@@ -18,4 +14,7 @@
   width: 100%;
   overflow: hidden;
   border-spacing: 0;
+  tr {
+    box-sizing: border-box;
+  }
 }
