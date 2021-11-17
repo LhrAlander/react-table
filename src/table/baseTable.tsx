@@ -31,9 +31,13 @@ export default function BaseTable<T = any>(props: ITableProps<T>) {
     }),
   )
 
-  /**
-   * TODO: FIX ME 没有计算表头的高度
-   */
+  const tableWidth = useMemo<number>(() => {
+    return Math.max(
+      width,
+      columns.reduce((res, column) => res + column.width, 0),
+    )
+  }, [columns, width])
+
   const totalHeight = useMemo<number>(() => {
     if (typeof rowHeight === 'number') {
       return dataSource.length * rowHeight
@@ -60,10 +64,7 @@ export default function BaseTable<T = any>(props: ITableProps<T>) {
         })
         setRenderInfo(info)
         if (contentRef.current) {
-          contentRef.current.setAttribute(
-            'style',
-            `transform: translateY(${info.topBlank}px)`,
-          )
+          contentRef.current.style.transform = `translateY(${info.topBlank}px)`
         }
       }}
     >
@@ -74,6 +75,7 @@ export default function BaseTable<T = any>(props: ITableProps<T>) {
         <div
           ref={tableHeadRef}
           className={style.tableHeadContainer}
+          style={{ width: tableWidth }}
           onScroll={e => {
             const { scrollLeft } = e.target as HTMLDivElement
             if (contentRef.current) {
@@ -84,7 +86,7 @@ export default function BaseTable<T = any>(props: ITableProps<T>) {
           <TableHead columns={columns} />
         </div>
         <div
-          style={{ height: totalHeight }}
+          style={{ height: totalHeight, width: tableWidth }}
           className={classNames(style.contentWrapper)}
           ref={contentRef}
           onScroll={e => {

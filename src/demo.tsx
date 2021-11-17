@@ -4,7 +4,7 @@ import { IColumn } from '@/table/table.type'
 
 function getDataSource() {
   const dataSource = []
-  const dataLength = 100
+  const dataLength = 10000
   for (let i = 0; i < dataLength; i++) {
     dataSource.push({
       id: i,
@@ -56,19 +56,39 @@ const columns: IColumn[] = [
   {
     code: 'desc',
     title: '描述',
-    width: 500,
+    width: 300,
   },
 ]
 
 export default function App() {
-  const [dataSource] = useState(getDataSource())
+  const [dataSource, setDataSource] = useState(getDataSource())
   return (
     <BaseTable
       virtual
       width={1000}
       rowHeight={48}
       height={600}
-      columns={columns}
+      columns={[
+        ...columns,
+        {
+          code: 'operate',
+          title: '操作',
+          width: 200,
+          render: (text, value) => {
+            return (
+              <button
+                type="button"
+                onClick={() => {
+                  console.log('click', value)
+                  setDataSource(dataSource.filter(item => item !== value))
+                }}
+              >
+                删除
+              </button>
+            )
+          },
+        },
+      ]}
       dataSource={dataSource}
     />
   )
