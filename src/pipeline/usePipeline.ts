@@ -1,7 +1,8 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react';
 import PipelineManager from '@/pipeline/pipelineManager'
 
-export function usePipeline() {
+export function usePipeline(context?: any) {
   const [state, setState] = useState<any>({})
-  return new PipelineManager(state, setState)
+  const instance = useRef<PipelineManager>(new PipelineManager(state, setState, context))
+  return instance.current
 }

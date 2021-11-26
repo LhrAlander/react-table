@@ -9,9 +9,18 @@ export default class PipelineManager<T = any> {
 
   private readonly setState: (prevState: any) => any
 
-  constructor(state: any, setState: PipelineManager['setState']) {
+  private rowKey?: (record: T, index: number) => string
+
+  private context?: any
+
+  constructor(
+    state: any,
+    setState: PipelineManager['setState'],
+    context?: any,
+  ) {
     this.state = state
     this.setState = setState
+    this.context = context
   }
 
   use(nextMiddleWare: (pipeline: this) => this): this {
@@ -33,5 +42,30 @@ export default class PipelineManager<T = any> {
       columns: this._columns,
       dataSource: this._dataSource,
     }
+  }
+
+  setPrimaryKey(key: string | ((record: T, index: number) => string)): this {
+    if (typeof key === 'string') {
+      this.rowKey = (record, index) => record[key]
+    } else {
+      this.rowKey = key
+    }
+    return this;
+  }
+
+  getPrimaryKey() {
+    return this.rowKey
+  }
+
+  getDataSource() {
+    return this._dataSource
+  }
+
+  getColumns() {
+    return this._columns
+  }
+
+  getContext() {
+    return this.context
   }
 }
