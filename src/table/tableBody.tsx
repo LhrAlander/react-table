@@ -13,20 +13,20 @@ export function TableBody(props: ITableBodyProps) {
       </colgroup>
       <tbody>
         {dataSource
-          .slice(renderInfo.startIndex, renderInfo.endIndex)
+          .slice(renderInfo.topIndex, renderInfo.bottomIndex)
           .map((data, idx) => {
             const height =
               typeof rowHeight === 'function'
-                ? rowHeight(data, idx + renderInfo.startIndex)
+                ? rowHeight(data, idx + renderInfo.topIndex)
                 : rowHeight
             const _props = rowProps
-              ? rowProps(data, idx + renderInfo.startIndex)
+              ? rowProps(data, idx + renderInfo.topIndex)
               : {}
             return (
               <tr
-                key={`row-${renderInfo.startIndex + idx}`}
+                key={`row-${renderInfo.topIndex + idx}`}
                 style={{ height }}
-                data-id={`row-${renderInfo.startIndex + idx}`}
+                data-id={`row-${renderInfo.topIndex + idx}`}
                 {..._props}
               >
                 {columns.map((column, cIdx) => {
@@ -36,7 +36,7 @@ export function TableBody(props: ITableBodyProps) {
                     : dataValue
                   return (
                     <td
-                      key={`row-${renderInfo.startIndex + idx}_column-${cIdx}`}
+                      key={`row-${renderInfo.topIndex + idx}_column-${cIdx}`}
                     >
                       {cell}
                     </td>

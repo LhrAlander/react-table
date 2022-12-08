@@ -1,10 +1,10 @@
-import React, { useMemo, useRef, useState } from 'react'
+import React, {useEffect, useLayoutEffect, useMemo, useRef, useState} from 'react'
 import classNames from 'classnames'
-import { ITableProps } from '@/table/table.type'
+import {ITableProps} from '@/table/table.type'
 import style from './table.less'
-import { ICalculateRenderInfoResult } from '@/table/helpers/calculation.type'
-import { calculateRenderInfo } from '@/table/helpers/calculation'
-import { TableBody } from '@/table/tableBody'
+import {ICalculateRenderInfoResult} from '@/table/helpers/calculation.type'
+import Calculator from '@/table/helpers/calculation'
+import {TableBody} from '@/table/tableBody'
 import TableHead from '@/table/tableHead'
 
 export default function BaseTable<T = any>(props: ITableProps<T>) {
@@ -17,18 +17,15 @@ export default function BaseTable<T = any>(props: ITableProps<T>) {
     height = 400,
     rowProps,
   } = props
+  const inRender = useRef(false)
 
   const domRef = useRef<HTMLDivElement>()
   const contentRef = useRef<HTMLDivElement>()
   const tableHeadRef = useRef<HTMLDivElement>()
+  const calculator = useRef(new Calculator<T>(dataSource, rowHeight)).current
 
   const [renderInfo, setRenderInfo] = useState<ICalculateRenderInfoResult>(
-    calculateRenderInfo({
-      offsetY: 0,
-      dataSource,
-      rowHeight,
-      renderHeight: height,
-    }),
+    calculator.getVerticalRenderRange(dataSource, height, 0),
   )
 
   const tableWidth = useMemo<number>(() => {
@@ -47,46 +44,51 @@ export default function BaseTable<T = any>(props: ITableProps<T>) {
       return res + rowHeight(data, idx)
     }, 0)
   }, [dataSource, rowHeight])
+  const lastOffsetY = useRef(0)
+  useLayoutEffect(() => {
+    inRender.current = true
+  }, [renderInfo])
+  useEffect(() => {
+    domRef.current.scrollTop = lastOffsetY.current
+  }, [renderInfo])
 
   return (
     <div
       className={style.tableContainer}
-      style={{ width, height }}
+      style={{width, height}}
       ref={domRef}
       onScroll={event => {
         const target = event.target as HTMLDivElement
         const offsetY = target.scrollTop
-        const info = calculateRenderInfo({
-          rowHeight,
+        lastOffsetY.current = offsetY
+
+        const info = calculator.getVerticalRenderRange(
           dataSource,
-          renderHeight: height,
+          height,
           offsetY,
-        })
+        )
         setRenderInfo(info)
-        if (contentRef.current) {
-          contentRef.current.style.transform = `translateY(${info.topBlank}px)`
-        }
+        target.scrollTop = offsetY
       }}
     >
       <div
         className={style.transformHelper}
-        style={{ width, height: totalHeight }}
+        style={{width, height: totalHeight}}
       >
         <div
           ref={tableHeadRef}
           className={style.tableHeadContainer}
-          style={{ width: tableWidth }}
+          style={{width: tableWidth}}
           onScroll={e => {
-            const { scrollLeft } = e.target as HTMLDivElement
+            const {scrollLeft} = e.target as HTMLDivElement
             if (contentRef.current) {
               contentRef.current.scrollLeft = scrollLeft
             }
           }}
         >
-          <TableHead columns={columns} />
+          <TableHead columns={columns}/>
         </div>
         <div
-          style={{ height: totalHeight, width: tableWidth }}
           className={classNames(style.contentWrapper)}
           ref={contentRef}
           onScroll={e => {
@@ -96,6 +98,9 @@ export default function BaseTable<T = any>(props: ITableProps<T>) {
             }
           }}
         >
+          {renderInfo.topBlank > 0 && (
+            <div key="top-blank" className={classNames(style.top)} style={{height: renderInfo.topBlank}}/>
+          )}
           <TableBody
             columns={columns}
             dataSource={dataSource}
@@ -103,6 +108,9 @@ export default function BaseTable<T = any>(props: ITableProps<T>) {
             renderInfo={renderInfo}
             rowProps={rowProps}
           />
+          {renderInfo.bottomBlank > 0 && (
+            <div key="bottom-blank" className={classNames(style.bottom)} style={{height: renderInfo.bottomBlank}}/>
+          )}
         </div>
       </div>
     </div>
