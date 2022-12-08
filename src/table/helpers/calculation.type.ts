@@ -8,9 +8,8 @@ export interface ICalculateRenderInfoParams {
 }
 
 export interface ICalculateRenderInfoResult {
-  startIndex: number
-  endIndex: number
+  topIndex: number
+  bottomIndex: number
   topBlank: number
   bottomBlank: number
-  offsetY: number
 }
