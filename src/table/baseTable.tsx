@@ -1,11 +1,20 @@
-import React, {useEffect, useLayoutEffect, useMemo, useRef, useState} from 'react'
+import React, {
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
 import classNames from 'classnames'
-import {ITableProps} from '@/table/table.type'
+import { ITableProps } from '@/table/table.type'
 import style from './table.less'
-import {ICalculateRenderInfoResult} from '@/table/helpers/calculation.type'
-import Calculator from '@/table/helpers/calculation'
-import {TableBody} from '@/table/tableBody'
+import { ICalculateRenderInfoResult } from '@/table/helpers/calculation.type'
+import { newCalculator } from '@/table/helpers/calculation'
+import { TableBody } from '@/table/tableBody'
 import TableHead from '@/table/tableHead'
+import CalculatorContext from '@/contexts/calculator'
+import useForceUpdate from '@/hooks/useForceUpdate'
+import calculator from '@/contexts/calculator'
 
 export default function BaseTable<T = any>(props: ITableProps<T>) {
   const {
@@ -16,16 +25,30 @@ export default function BaseTable<T = any>(props: ITableProps<T>) {
     width = 600,
     height = 400,
     rowProps,
+    rowKey,
   } = props
   const inRender = useRef(false)
 
   const domRef = useRef<HTMLDivElement>()
   const contentRef = useRef<HTMLDivElement>()
   const tableHeadRef = useRef<HTMLDivElement>()
-  const calculator = useRef(new Calculator<T>(dataSource, rowHeight)).current
+  const forceUpdate = useForceUpdate()
+  const calculator = useRef(newCalculator<T>(dataSource, rowHeight, rowKey))
+
+  useEffect(() => {
+    calculator.current.updateReRenderFn(forceUpdate)
+  }, [forceUpdate, calculator])
+
+  useEffect(() => {
+    calculator.current.setRowKey(rowKey)
+  }, [rowKey, calculator])
+
+  useEffect(() => {
+    calculator.current.setNewData(dataSource)
+  }, [dataSource, calculator])
 
   const [renderInfo, setRenderInfo] = useState<ICalculateRenderInfoResult>(
-    calculator.getVerticalRenderRange(dataSource, height, 0),
+    calculator.current.getVerticalRenderRange(dataSource, height, 0),
   )
 
   const tableWidth = useMemo<number>(() => {
@@ -35,15 +58,6 @@ export default function BaseTable<T = any>(props: ITableProps<T>) {
     )
   }, [columns, width])
 
-  const totalHeight = useMemo<number>(() => {
-    if (typeof rowHeight === 'number') {
-      return dataSource.length * rowHeight
-    }
-
-    return dataSource.reduce<number>((res, data, idx) => {
-      return res + rowHeight(data, idx)
-    }, 0)
-  }, [dataSource, rowHeight])
   const lastOffsetY = useRef(0)
   useLayoutEffect(() => {
     inRender.current = true
@@ -55,14 +69,14 @@ export default function BaseTable<T = any>(props: ITableProps<T>) {
   return (
     <div
       className={style.tableContainer}
-      style={{width, height}}
+      style={{ width, height }}
       ref={domRef}
       onScroll={event => {
         const target = event.target as HTMLDivElement
         const offsetY = target.scrollTop
         lastOffsetY.current = offsetY
 
-        const info = calculator.getVerticalRenderRange(
+        const info = calculator.current.getVerticalRenderRange(
           dataSource,
           height,
           offsetY,
@@ -71,22 +85,19 @@ export default function BaseTable<T = any>(props: ITableProps<T>) {
         target.scrollTop = offsetY
       }}
     >
-      <div
-        className={style.transformHelper}
-        style={{width, height: totalHeight}}
-      >
+      <div className={style.transformHelper} style={{ width }}>
         <div
           ref={tableHeadRef}
           className={style.tableHeadContainer}
-          style={{width: tableWidth}}
+          style={{ width: tableWidth }}
           onScroll={e => {
-            const {scrollLeft} = e.target as HTMLDivElement
+            const { scrollLeft } = e.target as HTMLDivElement
             if (contentRef.current) {
               contentRef.current.scrollLeft = scrollLeft
             }
           }}
         >
-          <TableHead columns={columns}/>
+          <TableHead columns={columns} />
         </div>
         <div
           className={classNames(style.contentWrapper)}
@@ -99,7 +110,11 @@ export default function BaseTable<T = any>(props: ITableProps<T>) {
           }}
         >
           {renderInfo.topBlank > 0 && (
-            <div key="top-blank" className={classNames(style.top)} style={{height: renderInfo.topBlank}}/>
+            <div
+              key="top-blank"
+              className={classNames(style.top)}
+              style={{ height: renderInfo.topBlank }}
+            />
           )}
           <TableBody
             columns={columns}
@@ -109,7 +124,11 @@ export default function BaseTable<T = any>(props: ITableProps<T>) {
             rowProps={rowProps}
           />
           {renderInfo.bottomBlank > 0 && (
-            <div key="bottom-blank" className={classNames(style.bottom)} style={{height: renderInfo.bottomBlank}}/>
+            <div
+              key="bottom-blank"
+              className={classNames(style.bottom)}
+              style={{ height: renderInfo.bottomBlank }}
+            />
           )}
         </div>
       </div>

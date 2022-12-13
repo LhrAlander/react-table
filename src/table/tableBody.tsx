@@ -1,6 +1,8 @@
-import React from 'react'
+import React, { useContext } from 'react'
+import ResizeObserver from 'rc-resize-observer'
 import style from '@/table/table.less'
 import { ITableBodyProps } from '@/table/tableBody.type'
+import CalculatorContext from '@/contexts/calculator'
 
 export function TableBody(props: ITableBodyProps) {
   const { renderInfo, columns, dataSource, rowHeight, rowProps } = props
@@ -23,26 +25,30 @@ export function TableBody(props: ITableBodyProps) {
               ? rowProps(data, idx + renderInfo.topIndex)
               : {}
             return (
-              <tr
-                key={`row-${renderInfo.topIndex + idx}`}
-                style={{ height }}
-                data-id={`row-${renderInfo.topIndex + idx}`}
-                {..._props}
-              >
-                {columns.map((column, cIdx) => {
-                  const dataValue = column.code ? data[column.code] : undefined
-                  const cell = column.render
-                    ? column.render(dataValue, data, idx)
-                    : dataValue
-                  return (
-                    <td
-                      key={`row-${renderInfo.topIndex + idx}_column-${cIdx}`}
-                    >
-                      {cell}
-                    </td>
-                  )
-                })}
-              </tr>
+              <ResizeObserver>
+                <tr
+                  key={`row-${renderInfo.topIndex + idx}`}
+                  style={{ height }}
+                  data-id={`row-${renderInfo.topIndex + idx}`}
+                  {..._props}
+                >
+                  {columns.map((column, cIdx) => {
+                    const dataValue = column.code
+                      ? data[column.code]
+                      : undefined
+                    const cell = column.render
+                      ? column.render(dataValue, data, idx)
+                      : dataValue
+                    return (
+                      <td
+                        key={`row-${renderInfo.topIndex + idx}_column-${cIdx}`}
+                      >
+                        {cell}
+                      </td>
+                    )
+                  })}
+                </tr>
+              </ResizeObserver>
             )
           })}
       </tbody>
