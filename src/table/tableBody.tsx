@@ -1,11 +1,13 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import ResizeObserver from 'rc-resize-observer'
 import style from '@/table/table.less'
 import { ITableBodyProps } from '@/table/tableBody.type'
-import CalculatorContext from '@/contexts/calculator'
+import { useCalculator } from '@/contexts/calculator'
 
 export function TableBody(props: ITableBodyProps) {
   const { renderInfo, columns, dataSource, rowHeight, rowProps } = props
+  const calculator = useCalculator()
+
   return (
     <table className={style.table}>
       <colgroup>
@@ -25,9 +27,13 @@ export function TableBody(props: ITableBodyProps) {
               ? rowProps(data, idx + renderInfo.topIndex)
               : {}
             return (
-              <ResizeObserver>
+              <ResizeObserver
+                key={`row-${renderInfo.topIndex + idx}`}
+                onResize={({ height: h }) => {
+                  calculator.updateRowHeight(data, idx + renderInfo.topIndex, h)
+                }}
+              >
                 <tr
-                  key={`row-${renderInfo.topIndex + idx}`}
                   style={{ height }}
                   data-id={`row-${renderInfo.topIndex + idx}`}
                   {..._props}
@@ -37,7 +43,11 @@ export function TableBody(props: ITableBodyProps) {
                       ? data[column.code]
                       : undefined
                     const cell = column.render
-                      ? column.render(dataValue, data, idx)
+                      ? column.render(
+                          dataValue,
+                          data,
+                          idx + renderInfo.topIndex,
+                        )
                       : dataValue
                     return (
                       <td

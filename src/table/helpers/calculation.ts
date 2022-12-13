@@ -177,6 +177,7 @@ export function newCalculator<T = unknown>(
   data: T[],
   rowHeight: TRowHeight<T>,
   rowKey: TRowKey<T>,
+  Comp: Function
 ) {
   console.log('in new function')
   return new Calculator(data, rowHeight, rowKey)

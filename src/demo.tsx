@@ -48,7 +48,7 @@ const columns: IColumn[] = [
     title: '地址',
     width: 600,
     render: (value, rowData, index) => {
-      return <span>{value} </span>
+      return <div style={{ height: index % 2 === 0 ? 50 : 100 }}>{value} </div>
     },
   },
   {
